@@ -1,0 +1,39 @@
+---
+- name: Apache webserver configuration playbook
+  hosts: kvm
+  become: true
+  tasks:
+     - name: Installing Apache httpd server
+       package:
+           name: httpd
+           state: latest
+
+     - name: Starting and enabling httpd servicef
+       service:
+           name: httpd
+           state: started
+           enabled: true
+
+     - name: setting up apache webserver 
+       template:
+           src: /home/sam/playbooks/index.j2
+           dest: /var/www/html/index.html
+
+     - name: Restarting httpd service
+       service:
+           name: httpd
+           state: restarted
+     - name: Allowing http traffic in firewall
+       firewalld:
+           service: http
+           state: enabled
+           permanent: yes
+
+     - name: Reload the firewalld service
+       service:
+           name: firewalld
+           state: reloaded
+...
+
+
+
